@@ -4,6 +4,7 @@ Scrape the current table and remaining fixtures from kicker.de for the 2. Bundes
 
 import os
 import csv
+import re
 import datetime
 import requests
 from bs4 import BeautifulSoup
@@ -105,6 +106,7 @@ def get_current_table(export: bool = False):
         try:
             platz = extract_cell_text(cols[0])
             team_name = extract_cell_text(cols[3])
+            team_name = re.sub(r" \((A|N)\)$", "", team_name)  # Entferne "(A)" oder "(N)"
             spiele = extract_cell_text(cols[4])
             siege = extract_cell_text(cols[5])
             unentschieden = extract_cell_text(cols[6])
