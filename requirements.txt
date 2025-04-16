@@ -1,2 +1,6 @@
 requests
+black
+pylint
+pytest
+pytest-cov
 beautifulsoup4
