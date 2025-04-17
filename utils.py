@@ -89,3 +89,28 @@ def read_csv_fixtures(filepath):
                 except (ValueError, SyntaxError):
                     print(f"⚠️ Fehler beim Parsen von Paarungen: {pairings_str}")
     return fixtures
+
+def read_csv_results(filepath):
+    """
+    Liest eine CSV-Datei mit Spielergebnissen ein und gibt eine Liste aller Spiele zurück.
+    Args:
+        filepath (str): Der Pfad zur CSV-Datei
+    Returns:
+        list of dict: Eine Liste mit Dictionaries für jedes Spiel.
+    """
+    results = []
+    with open(filepath, mode='r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            spieltag = int(row["Spieltag"])
+            spiele = ast.literal_eval(row["Ergebnisse"])
+            for spiel in spiele:
+                heim, auswärts, tore_heim, tore_auswärts = spiel
+                results.append({
+                    "Spieltag": spieltag,
+                    "Heim": heim,
+                    "Auswärts": auswärts,
+                    "Tore_Heim": int(tore_heim),
+                    "Tore_Auswärts": int(tore_auswärts)
+                })
+    return results
