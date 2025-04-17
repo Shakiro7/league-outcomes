@@ -156,9 +156,84 @@ def get_remaining_fixtures(start_matchday: int, export: bool = False):
     return fixtures
 
 
+def get_matchday_results(start_matchday: int, end_matchday: int, export: bool = False):
+    """
+    Scrape the matchday results from kicker.de for the 2. Bundesliga.
+    Args:
+        start_matchday (int): The matchday to start scraping from.
+        end_matchday (int): The matchday to end scraping at.
+        export (bool): If True, export the data to a CSV file.
+    Returns:
+        list: A list of dictionaries containing the matchday results data.
+    """
+
+    results = []
+
+    for matchday in range(start_matchday, end_matchday + 1):
+        url = f"{BASE_URL}/2-bundesliga/spieltag/2024-25/{matchday}"
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/119.0.0.0 Safari/537.36"
+            )
+        }
+
+        res = requests.get(url, headers=headers)
+        if res.status_code != 200:
+            print(
+                f"Fehler beim Laden von Spieltag {matchday}: Status {res.status_code}"
+            )
+            continue
+
+        soup = BeautifulSoup(res.text, "html.parser")
+        main_section = soup.find("main", class_="kick__data-grid__main")
+        if not main_section:
+            print(f"Keine Spieldaten für Spieltag {matchday} gefunden.")
+            continue
+
+        match_blocks = main_section.find_all(
+            "div", class_="kick__v100-gameList kick__module-margin"
+        )
+        matchday_results = []
+
+        for block in match_blocks:
+            game_cells = block.find_all(
+                "div", class_="kick__v100-gameList__gameRow__gameCell"
+            )
+            for cell in game_cells:
+                team_tags = cell.find_all("a", class_="kick__v100-gameCell__team")
+                scores = cell.find_all("div", class_="kick__v100-scoreBoard__scoreHolder__score")
+
+                if len(team_tags) == 2 and len(scores) >= 2:
+                    team1 = team_tags[0].find(
+                        "div", class_="kick__v100-gameCell__team__name"
+                    )
+                    team2 = team_tags[1].find(
+                        "div", class_="kick__v100-gameCell__team__name"
+                    )
+                    if team1 and team2:
+                        game_results = [
+                            team1.get_text(strip=True),
+                            team2.get_text(strip=True),
+                            scores[0].get_text(strip=True),
+                            scores[1].get_text(strip=True),
+                        ]
+                        matchday_results.append(game_results)
+
+        results.append({"Spieltag": matchday, "Ergebnisse": matchday_results})
+
+    if export:
+        export_data(results, f"ergebnisse_spieltag_{start_matchday}_bis_{end_matchday}")
+
+    return results
+
+
+
 if __name__ == "__main__":
-    table = get_current_table(export=True)
-    fixtures = get_remaining_fixtures(30, export=True)  # Beispiel: Spieltag 30
+    table = get_current_table(export=False)
+    fixtures = get_remaining_fixtures(30, export=False)
+    results = get_matchday_results(28, 29, export=False)
 
     print("Aktuelle Tabelle:")
     for row in table:
@@ -166,4 +241,8 @@ if __name__ == "__main__":
 
     print("\nVerbleibende Spiele:")
     for match in fixtures:
+        print(match)
+
+    print("\nErgebnisse der angegebenen Spieltage:")
+    for match in results:
         print(match)
