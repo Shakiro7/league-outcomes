@@ -2,62 +2,12 @@
 Scrape the current table and remaining fixtures from kicker.de for the 2. Bundesliga.
 """
 
-import os
-import csv
 import re
-import datetime
 import requests
 from bs4 import BeautifulSoup
+from utils import export_data
 
 BASE_URL = "https://www.kicker.de"
-
-
-def export_data(data, filename_prefix):
-    """
-    Export data to a CSV file with a timestamp in the filename.
-    Args:
-        data (list): The data to export.
-        filename_prefix (str): The prefix for the filename.    
-    """
-    # Stelle sicher, dass der "Data"-Ordner existiert
-    os.makedirs("Data", exist_ok=True)
-
-    # Erzeuge einen Dateinamen mit Zeitstempel
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"{filename_prefix}_{timestamp}.csv"
-    filepath = os.path.join("Data", filename)
-
-    # Prüfe, ob die Datenliste leer ist
-    if not data:
-        print(f"Keine Daten zum Exportieren für {filename_prefix}.")
-        return
-
-    # Tabellen-Daten: Liste von Dictionaries
-    if isinstance(data[0], dict):
-        keys = data[0].keys()
-        with open(filepath, mode="w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=keys)
-            writer.writeheader()
-            writer.writerows(data)
-
-    # Spielpaarungen-Daten: Liste von Dicts mit Spieltag & Paarungen
-    elif isinstance(data[0], (list, tuple)) or isinstance(data[0], str):
-        # Fallback falls kein Dictionary übergeben wurde
-        with open(filepath, mode="w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            for row in data:
-                writer.writerow(row)
-
-    elif isinstance(data[0], dict) and "Spieltag" in data[0] and "Paarungen" in data[0]:
-        with open(filepath, mode="w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow(["Spieltag", "Heim", "Auswärts"])
-            for item in data:
-                spieltag = item["Spieltag"]
-                for heim, auswärts in item["Paarungen"]:
-                    writer.writerow([spieltag, heim, auswärts])
-
-    print(f"Daten erfolgreich exportiert nach {filepath}")
 
 
 def get_current_table(export: bool = False):

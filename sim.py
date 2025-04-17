@@ -3,61 +3,21 @@ League simulator that simulates the remaining matches of a league season and cal
 the probability of a specific team finishing in each position.
 """
 
-import csv
 import random
-import ast
 from collections import Counter
 import click
-
-# Hilfsfunktion: CSV einlesen
-def read_csv_table(filepath):
-    """
-    Liest eine CSV-Datei ein und gibt eine Liste von Dictionaries zurück.
-    Args:
-        filepath (str): Der Pfad zur CSV-Datei.
-    Returns:
-        list: Eine Liste von Dictionaries, die die Daten der CSV-Datei repräsentieren.
-    """
-    with open(filepath, newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
+from utils import read_csv_table, read_csv_fixtures
 
 
-def read_csv_fixtures(filepath):
-    """
-    Liest eine CSV-Datei mit Spielpaarungen ein und gibt eine Liste von Tuplen zurück.
-    Args:
-        filepath (str): Der Pfad zur CSV-Datei.
-    Returns:
-        list: Eine Liste von Tuplen, die die Spielpaarungen repräsentieren.
-    """
-    fixtures = []
-    with open(filepath, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            pairings_str = row.get("Paarungen")
-            if pairings_str:
-                try:
-                    pairings = ast.literal_eval(pairings_str)
-                    for match in pairings:
-                        if isinstance(match, list) and len(match) == 2:
-                            fixtures.append((match[0].strip(), match[1].strip()))
-                except (ValueError, SyntaxError):
-                    print(f"⚠️ Fehler beim Parsen von Paarungen: {pairings_str}")
-    return fixtures
-
-
-# Hilfsfunktion: Simulation eines Spiels
 def simulate_game():
     """
     Simuliert ein Spiel zwischen zwei Teams und gibt die Tore zurück.
     Returns:
         tuple: Ein Tupel mit den Toren des Heim- und Auswärtsteams.
     """
-    # Hier könnte eine komplexere Logik zur Spielsimulation implementiert werden.
     return random.randint(0, 3), random.randint(0, 3)
 
 
-# Hilfsfunktion: Tabelle updaten
 def update_table(table_dict, home, away, home_goals, away_goals):
     """
     Aktualisiert die Tabelle mit den Ergebnissen eines Spiels.
