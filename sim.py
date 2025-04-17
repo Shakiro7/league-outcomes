@@ -18,6 +18,24 @@ def simulate_game():
     return random.randint(0, 3), random.randint(0, 3)
 
 
+def simulate_game_realgoals():
+    """
+    Simuliert ein Spiel zwischen zwei Teams basierend auf realistischeren Ergebniswahrscheinlichkeiten.
+    Returns:
+        tuple: Ein Tupel mit den Toren des Heim- und Auswärtsteams.
+    """
+
+    # Gewichtete Wahrscheinlichkeiten für Tore (z.B. 0 Tore häufiger als 3+ Tore)
+    torverteilung = [0, 1, 2, 3, 4]         # mögliche Tore
+    torgewichte_heim =  [54/261, 87/261, 61/261, 40/261, 19/261]
+    torgewichte_auswärts = [76/261, 80/261, 61/261, 25/261, 19/261]
+
+    tore_heim = random.choices(torverteilung, weights=torgewichte_heim, k=1)[0]
+    tore_auswärts = random.choices(torverteilung, weights=torgewichte_auswärts, k=1)[0]
+
+    return tore_heim, tore_auswärts
+
+
 def update_table(table_dict, home, away, home_goals, away_goals):
     """
     Aktualisiert die Tabelle mit den Ergebnissen eines Spiels.
@@ -78,7 +96,7 @@ def update_table(table_dict, home, away, home_goals, away_goals):
     prompt="Teamname",
     help="Name des Teams für die Wahrscheinlichkeitsanalyse",
 )
-@click.option("--anzahl", default=1000, help="Anzahl der Simulationen (Standard: 1000)")
+@click.option("--anzahl", default=1000, help="Anzahl der Simulationen (Default: 1000)")
 def simulate_season(tabelle, spiele, team, anzahl):
     """
     Simuliert die verbleibenden Spiele einer Saison und berechnet die 
@@ -94,6 +112,7 @@ def simulate_season(tabelle, spiele, team, anzahl):
     fixtures = read_csv_fixtures(spiele)
 
     platzierungsstatistik = Counter()
+    ergebnis_counter = Counter()
 
     for sim in range(anzahl):
         # Tabelle in dict-Form umwandeln
@@ -112,14 +131,21 @@ def simulate_season(tabelle, spiele, team, anzahl):
             }
 
         # Spiele simulieren
-        print(f"Simulation {sim + 1}/{anzahl}...")
+        # print(f"Simulation {sim + 1}/{anzahl}...")
         for heim, auswärts in fixtures:
-            tore_heim, tore_auswärts = simulate_game()
-            print(
-                f"Simuliere Spiel: {heim} vs {auswärts} -> {tore_heim}:{tore_auswärts}"
-            )
+            tore_heim, tore_auswärts = simulate_game_realgoals()
+            # print(f"Simuliere Spiel: {heim} vs {auswärts} -> {tore_heim}:{tore_auswärts}")
+            
             # Tabelle aktualisieren
             update_table(table, heim, auswärts, tore_heim, tore_auswärts)
+            
+            # Spielergebnis aus Sicht des Heimteams zählen
+            if tore_heim > tore_auswärts:
+                ergebnis_counter["Sieg"] += 1
+            elif tore_heim < tore_auswärts:
+                ergebnis_counter["Niederlage"] += 1
+            else:
+                ergebnis_counter["Unentschieden"] += 1
 
         # Tabelle sortieren nach Punkte, Differenz, Tore
         sorted_table = sorted(
@@ -127,12 +153,12 @@ def simulate_season(tabelle, spiele, team, anzahl):
             key=lambda x: (x["Punkte"], x["Differenz"], x["Tore"]),
             reverse=True,
         )
-        print(f"Sortierte Tabelle nach Simulation {sim + 1}:")
-        for i, row in enumerate(sorted_table):
-            print(
-                f"{i + 1}. {row['Team']} - Punkte: {row['Punkte']}, "
-                f"Differenz: {row['Differenz']}, Tore: {row['Tore']}"
-            )
+        # print(f"Sortierte Tabelle nach Simulation {sim + 1}:")
+        # for i, row in enumerate(sorted_table):
+            # print(
+            #     f"{i + 1}. {row['Team']} - Punkte: {row['Punkte']}, "
+            #     f"Differenz: {row['Differenz']}, Tore: {row['Tore']}"
+            # )
 
         for i, row in enumerate(sorted_table):
             if row["Team"].lower() == team.lower():
@@ -145,6 +171,12 @@ def simulate_season(tabelle, spiele, team, anzahl):
         wahrscheinlichkeit = (platzierungsstatistik[platz] / anzahl) * 100
         print(f"Platz {platz}: {wahrscheinlichkeit:.2f} %")
 
+    # Verteilung der Spielergebnisse anzeigen
+    total = sum(ergebnis_counter.values())
+    print("\nVerteilung der Spielergebnisse (aus Sicht des Heimteams):")
+    for ergebnis, anzahl in ergebnis_counter.items():
+        prozent = anzahl / total * 100
+        print(f"{ergebnis:<13}: {anzahl:>4} Spiele ({prozent:.2f}%)")
 
 if __name__ == "__main__":
     simulate_season() # pylint: disable=no-value-for-parameter
