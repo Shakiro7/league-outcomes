@@ -110,7 +110,7 @@ def print_results_separated(heimtore_counter, auswaertstore_counter, ergebnis_co
 
 
 if __name__ == "__main__":
-    DATEIPFAD = "Data/ergebnisse_spieltag_1_bis_29.csv"
+    DATEIPFAD = "data/ergebnisse_spieltag_1_bis_29.csv"
     ergebnisse = read_csv_results(DATEIPFAD)
     heimtore, auswaertstore, ergebnisse_verteilung = analyze_goals_separated(ergebnisse)
     print_results_separated(heimtore, auswaertstore, ergebnisse_verteilung)

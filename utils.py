@@ -15,13 +15,13 @@ def export_data(data, filename_prefix):
         data (list): The data to export.
         filename_prefix (str): The prefix for the filename.
     """
-    # Stelle sicher, dass der "Data"-Ordner existiert
-    os.makedirs("Data", exist_ok=True)
+    # Stelle sicher, dass der "data"-Ordner existiert
+    os.makedirs("data", exist_ok=True)
 
     # Erzeuge einen Dateinamen mit Zeitstempel
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"{filename_prefix}_{timestamp}.csv"
-    filepath = os.path.join("Data", filename)
+    filepath = os.path.join("data", filename)
 
     # Prüfe, ob die Datenliste leer ist
     if not data:
