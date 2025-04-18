@@ -1,6 +1,7 @@
 """
 This module contains various utility functions that are used throughout the project.
 """
+
 import os
 import csv
 import datetime
@@ -12,7 +13,7 @@ def export_data(data, filename_prefix):
     Export data to a CSV file with a timestamp in the filename.
     Args:
         data (list): The data to export.
-        filename_prefix (str): The prefix for the filename.    
+        filename_prefix (str): The prefix for the filename.
     """
     # Stelle sicher, dass der "Data"-Ordner existiert
     os.makedirs("Data", exist_ok=True)
@@ -36,21 +37,12 @@ def export_data(data, filename_prefix):
             writer.writerows(data)
 
     # Spielpaarungen-Daten: Liste von Dicts mit Spieltag & Paarungen
-    elif isinstance(data[0], (list, tuple)) or isinstance(data[0], str):
+    elif isinstance(data[0], (list, str, tuple)):
         # Fallback falls kein Dictionary übergeben wurde
         with open(filepath, mode="w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             for row in data:
                 writer.writerow(row)
-
-    elif isinstance(data[0], dict) and "Spieltag" in data[0] and "Paarungen" in data[0]:
-        with open(filepath, mode="w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow(["Spieltag", "Heim", "Auswärts"])
-            for item in data:
-                spieltag = item["Spieltag"]
-                for heim, auswärts in item["Paarungen"]:
-                    writer.writerow([spieltag, heim, auswärts])
 
     print(f"Daten erfolgreich exportiert nach {filepath}")
 
@@ -87,8 +79,9 @@ def read_csv_fixtures(filepath):
                         if isinstance(match, list) and len(match) == 2:
                             fixtures.append((match[0].strip(), match[1].strip()))
                 except (ValueError, SyntaxError):
-                    print(f"⚠️ Fehler beim Parsen von Paarungen: {pairings_str}")
+                    print(f"Fehler beim Parsen von Paarungen: {pairings_str}")
     return fixtures
+
 
 def read_csv_results(filepath):
     """
@@ -99,18 +92,20 @@ def read_csv_results(filepath):
         list of dict: Eine Liste mit Dictionaries für jedes Spiel.
     """
     results = []
-    with open(filepath, mode='r', encoding='utf-8') as f:
+    with open(filepath, mode="r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             spieltag = int(row["Spieltag"])
             spiele = ast.literal_eval(row["Ergebnisse"])
             for spiel in spiele:
-                heim, auswärts, tore_heim, tore_auswärts = spiel
-                results.append({
-                    "Spieltag": spieltag,
-                    "Heim": heim,
-                    "Auswärts": auswärts,
-                    "Tore_Heim": int(tore_heim),
-                    "Tore_Auswärts": int(tore_auswärts)
-                })
+                heim, auswaerts, tore_heim, tore_auswaerts = spiel
+                results.append(
+                    {
+                        "Spieltag": spieltag,
+                        "Heim": heim,
+                        "Auswaerts": auswaerts,
+                        "Tore_Heim": int(tore_heim),
+                        "Tore_Auswaerts": int(tore_auswaerts),
+                    }
+                )
     return results

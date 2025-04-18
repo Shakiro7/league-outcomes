@@ -26,8 +26,20 @@ def get_current_table(export: bool = False):
             "Chrome/119.0.0.0 Safari/537.36"
         )
     }
-    res = requests.get(url, headers=headers)
-    print(f"Response Status Code: {res.status_code}")
+    try:
+        res = requests.get(
+            url, headers=headers, timeout=10
+        )  # 10s for the server to respond
+        if res.status_code != 200:
+            print(f"Fehler beim Laden der Tabelle: Status {res.status_code}")
+            return []
+    except requests.exceptions.Timeout:
+        print("Timeout beim Laden der Tabelle")
+        return []
+    except requests.exceptions.RequestException as e:
+        print(f"Allgemeiner Fehler beim Laden der Tabelle: {e}")
+        return []
+
     soup = BeautifulSoup(res.text, "html.parser")
 
     table_data = []
@@ -56,7 +68,9 @@ def get_current_table(export: bool = False):
         try:
             platz = extract_cell_text(cols[0])
             team_name = extract_cell_text(cols[3])
-            team_name = re.sub(r" \((A|N)\)$", "", team_name)  # Entferne "(A)" oder "(N)"
+            team_name = re.sub(
+                r" \((A|N)\)$", "", team_name
+            )  # Entferne "(A)" oder "(N)"
             spiele = extract_cell_text(cols[4])
             siege = extract_cell_text(cols[5])
             unentschieden = extract_cell_text(cols[6])
@@ -78,7 +92,7 @@ def get_current_table(export: bool = False):
             }
 
             table_data.append(team_data)
-        except Exception as e:
+        except (IndexError, AttributeError, ValueError) as e:
             print(f"Fehler beim Parsen einer Zeile: {e}")
             continue
 
@@ -110,11 +124,20 @@ def get_remaining_fixtures(start_matchday: int, export: bool = False):
             )
         }
 
-        res = requests.get(url, headers=headers)
-        if res.status_code != 200:
-            print(
-                f"Fehler beim Laden von Spieltag {matchday}: Status {res.status_code}"
-            )
+        try:
+            res = requests.get(
+                url, headers=headers, timeout=10
+            )  # 10s for the server to respond
+            if res.status_code != 200:
+                print(
+                    f"Fehler beim Laden von Spieltag {matchday}: Status {res.status_code}"
+                )
+                continue
+        except requests.exceptions.Timeout:
+            print(f"Timeout beim Laden von Spieltag {matchday}")
+            continue
+        except requests.exceptions.RequestException as e:
+            print(f"Allgemeiner Fehler bei Spieltag {matchday}: {e}")
             continue
 
         soup = BeautifulSoup(res.text, "html.parser")
@@ -179,11 +202,20 @@ def get_matchday_results(start_matchday: int, end_matchday: int, export: bool = 
             )
         }
 
-        res = requests.get(url, headers=headers)
-        if res.status_code != 200:
-            print(
-                f"Fehler beim Laden von Spieltag {matchday}: Status {res.status_code}"
-            )
+        try:
+            res = requests.get(
+                url, headers=headers, timeout=10
+            )  # 10s for the server to respond
+            if res.status_code != 200:
+                print(
+                    f"Fehler beim Laden von Spieltag {matchday}: Status {res.status_code}"
+                )
+                continue
+        except requests.exceptions.Timeout:
+            print(f"Timeout beim Laden von Spieltag {matchday}")
+            continue
+        except requests.exceptions.RequestException as e:
+            print(f"Allgemeiner Fehler bei Spieltag {matchday}: {e}")
             continue
 
         soup = BeautifulSoup(res.text, "html.parser")
@@ -203,7 +235,9 @@ def get_matchday_results(start_matchday: int, end_matchday: int, export: bool = 
             )
             for cell in game_cells:
                 team_tags = cell.find_all("a", class_="kick__v100-gameCell__team")
-                scores = cell.find_all("div", class_="kick__v100-scoreBoard__scoreHolder__score")
+                scores = cell.find_all(
+                    "div", class_="kick__v100-scoreBoard__scoreHolder__score"
+                )
 
                 if len(team_tags) == 2 and len(scores) >= 2:
                     team1 = team_tags[0].find(
@@ -229,20 +263,19 @@ def get_matchday_results(start_matchday: int, end_matchday: int, export: bool = 
     return results
 
 
-
 if __name__ == "__main__":
-    table = get_current_table(export=False)
-    fixtures = get_remaining_fixtures(30, export=False)
-    results = get_matchday_results(28, 29, export=False)
+    tabelle = get_current_table(export=False)
+    paarungen = get_remaining_fixtures(30, export=False)
+    ergebnisse = get_matchday_results(28, 29, export=False)
 
     print("Aktuelle Tabelle:")
-    for row in table:
-        print(row)
+    for zeile in tabelle:
+        print(zeile)
 
     print("\nVerbleibende Spiele:")
-    for match in fixtures:
-        print(match)
+    for spiel in paarungen:
+        print(spiel)
 
     print("\nErgebnisse der angegebenen Spieltage:")
-    for match in results:
-        print(match)
+    for spiel in ergebnisse:
+        print(spiel)
