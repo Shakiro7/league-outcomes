@@ -70,6 +70,8 @@ python sim_season_all.py
 
 In dieser Sektion werden ab sofort die aktuellen Platzierungswahrscheinlichkeiten für jeden verbleibenden Spieltag dokumentiert.
 
+Beispiel: Spieltag 30 stellt die Platzierungswahrscheinlichkeiten der Teams VOR der Austragung der Spiele des 30. Spieltags dar.
+
 | Spieltag | Heatmap |
 |----------|---------|
 | 30       | [Heatmap anzeigen](output/platzierungsprobs_realgoals_2025-04-18_12-05-48.png) |
