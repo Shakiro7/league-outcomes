@@ -16,8 +16,8 @@ Dieses Projekt simuliert den Verlauf einer laufenden Ligasaison basierend auf de
 ## Installation
 
 ```bash
-git clone <repo-url>
-cd <repo-name>
+git clone https://github.com/Shakiro7/league-outcomes.git
+cd league-outcomes
 pip install -r requirements.txt
 ```
 
