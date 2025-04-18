@@ -1,4 +1,4 @@
-# Liga-Simulator – Platzierungswahrscheinlichkeiten berechnen
+# Liga-Simulator – Platzierungswahrscheinlichkeiten der zweiten Fußball-Bundesliga berechnen
 
 Dieses Projekt simuliert den Verlauf einer laufenden Ligasaison basierend auf der aktuellen Tabelle und den verbleibenden Spielpaarungen. Es berechnet die Wahrscheinlichkeiten, mit denen ein Team auf einem bestimmten Tabellenplatz landet – entweder für ein einzelnes Team (via CLI) oder für alle Teams mit Visualisierung (als Heatmap).
 
@@ -68,7 +68,7 @@ python sim_season_all.py
 
 ## 📅 Saisonverlauf: Wöchentliche Heatmaps
 
-In dieser Sektion werden ab sofort die aktuellen Platzierungswahrscheinlichkeiten für jeden verbleibenden Spieltag dokumentiert.
+In dieser Sektion werden ab sofort die aktuellen Platzierungswahrscheinlichkeiten für jeden verbleibenden Spieltag der zweiten Fußball-Bundesliga dokumentiert.
 
 Beispiel: Spieltag 30 stellt die Platzierungswahrscheinlichkeiten der Teams VOR der Austragung der Spiele des 30. Spieltags dar.
 
