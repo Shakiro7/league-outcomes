@@ -102,8 +102,8 @@ def simulate_season_for_all_teams(tabelle_path, spiele_path, anzahl=1000, export
 # Beispiel-Aufruf (als Skript)
 if __name__ == "__main__":
     simulate_season_for_all_teams(
-        tabelle_path="data/zweite_liga_tabelle_2025-04-16_18-53-38.csv",
-        spiele_path="data/paarungen_ab_spieltag_30_2025-04-16_18-53-39.csv",
-        anzahl=10000,
+        tabelle_path="data/zweite_liga_tabelle_2025-04-20_16-18-22.csv",
+        spiele_path="data/paarungen_ab_spieltag_31_2025-04-20_16-18-23.csv",
+        anzahl=1000000,
         export=True,
     )
