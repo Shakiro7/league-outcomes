@@ -25,7 +25,7 @@ pip install -r requirements.txt
 
 ## Datenstruktur
 
-### Tabelle (`tabelle.csv`)
+### Tabelle (siehe z.B. `zweite_liga_tabelle_2025-04-16_18-53-38.csv`)
 
 ```csv
 Platz,Team,Spiele,Siege,Unentschieden,Niederlagen,Tore,Differenz,Punkte
@@ -34,7 +34,7 @@ Platz,Team,Spiele,Siege,Unentschieden,Niederlagen,Tore,Differenz,Punkte
 ...
 ```
 
-### Spiele (`spiele.csv`)
+### Spiele (siehe z.B. `paarungen_ab_spieltag_30_2025-04-16_18-53-39.csv`)
 
 ```csv
 Spieltag,Paarungen
@@ -70,16 +70,16 @@ python sim_season_all.py
 
 In dieser Sektion werden ab sofort die aktuellen Platzierungswahrscheinlichkeiten für jeden verbleibenden Spieltag der zweiten Fußball-Bundesliga dokumentiert. 
 
-Die Platzierungswahrscheinlichkeiten werden dabei jeweils auf Basis von 1.000.000 Simulationen der verbleibenden Spieltage generiert. Zur Simulation der einzelnen Spiele wird dazu die Funktion "simulate_game_realgoals" aus dem "sim.py" Modul verwendet. Diese Funktion wählt sowohl für das Heim-, als auch das Auswärtsteam eine zufällige Toranzahl aus. Die Wahrscheinlichkeiten für die Auswahl einer bestimmten Toranzahl decken sich mit den Toranzahlen, die von allen Heim- bzw. Auswärtsteams der zweiten Fußball-Bundesliga bis einschließlich zum 29. Spieltag der Saisan 2024/25 erzielt wurden (z.B. Heimteams haben vom 1. bis zum 29. Spieltag beispielsweise 54-mal 0 Tore erzielt, wohingegen Auswärtsteams an diesen Spieltagen 76-mal 0 Tore erzielt haben). Bei den Wahrscheinlichkeiten für Toranzahlen wird somit nicht nach einzelnen Teams unterschieden.
+Die Platzierungswahrscheinlichkeiten werden dabei jeweils auf Basis von 1.000.000 Simulationen der verbleibenden Spieltage generiert. Zur Simulation der einzelnen Spiele wird dazu die Funktion "simulate_game_realgoals" aus dem "sim.py" Modul verwendet. Diese Funktion wählt sowohl für das Heim-, als auch das Auswärtsteam eine zufällige Toranzahl aus. Die Wahrscheinlichkeiten für die Auswahl einer bestimmten Toranzahl decken sich mit den Toranzahlen, die von allen Heim- bzw. Auswärtsteams der zweiten Fußball-Bundesliga bis einschließlich zum 29. Spieltag der Saisan 2024/25 erzielt wurden (Heimteams haben vom 1. bis zum 29. Spieltag beispielsweise 54-mal 0 Tore erzielt, wohingegen Auswärtsteams an diesen Spieltagen 76-mal 0 Tore erzielt haben). Bei den Wahrscheinlichkeiten für Toranzahlen wird somit nicht nach einzelnen Teams unterschieden.
 
 Die Platzierungswahrscheinlichkeiten repräsentieren die relative Häufigkeit bestimmter Platzierungen eines Teams in den 1.000.000 simulierten Saisonverläufen.
 
-Beispiel: Spieltag 30 stellt die Platzierungswahrscheinlichkeiten der Teams VOR der Austragung der Spiele des 30. Spieltags dar.
+Info: Die Heatmaps stellen die Platzierungswahrscheinlichkeiten der Teams VOR der Austragung der Spiele des jeweiligen Spieltags dar.
 
 | Spieltag | Heatmap |
 |----------|---------|
 | 30       | [Heatmap anzeigen](output/platzierungsprobs_realgoals_2025-04-18_12-05-48.png) |
-| 31       | *(Noch nicht verfügbar)* |
+| 31       | [Heatmap anzeigen](output/platzierungsprobs_2025-04-20_16-24-08.png) |
 | 32       | *(Noch nicht verfügbar)* |
 | 33       | *(Noch nicht verfügbar)* |
 | 34       | *(Noch nicht verfügbar)* |
