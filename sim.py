@@ -5,42 +5,81 @@ Simulationsmodul für die Simulation von Fußballspielen und Aktualisierung der 
 import random
 
 
-def simulate_game():
+def simulate_game_randint(
+    tore_heim_min: int = 0,
+    tore_heim_max: int = 3,
+    tore_auswaerts_min: int = 0,
+    tore_auswaerts_max: int = 3,
+):
     """
     Simuliert ein Spiel zwischen zwei Teams und gibt die Tore zurück.
+    Args:
+        tore_heim_min (int): Minimale Tore für das Heimteam.
+        tore_heim_max (int): Maximale Tore für das Heimteam.
+        tore_auswaerts_min (int): Minimale Tore für das Auswärtsteam.
+        tore_auswaerts_max (int): Maximale Tore für das Auswärtsteam.
     Returns:
         tuple: Ein Tupel mit den Toren des Heim- und Auswärtsteams.
     """
-    return random.randint(0, 3), random.randint(0, 3)
+    return random.randint(tore_heim_min, tore_heim_max), random.randint(
+        tore_auswaerts_min, tore_auswaerts_max
+    )
 
 
-def simulate_game_realgoals():
+def simulate_game_realgoals(
+    torverteilung: list = None,
+    torgewichte_heim: list = None,
+    torgewichte_auswaerts: list = None,
+):
     """
-    Simuliert ein Spiel zwischen zwei Teams basierend auf 
+    Simuliert ein Spiel zwischen zwei Teams basierend auf
     realistischeren Ergebniswahrscheinlichkeiten.
+    Args:
+        torverteilung (list): Liste der möglichen Toranzahlen eines Teams.
+        torgewichte_heim (list): Gewichtungen der Toranzahlen für Heimtore.
+        torgewichte_auswaerts (list): Gewichtungen der Toranzahlen für Auswärtstore.
     Returns:
         tuple: Ein Tupel mit den Toren des Heim- und Auswärtsteams.
     """
 
-    # Gewichtete Wahrscheinlichkeiten für Tore (z.B. 1 Tor häufiger als 3+ Tore)
-    torverteilung = [0, 1, 2, 3, 4]  # mögliche Tore
-    torgewichte_heim = [
-        54 / 261,
-        87 / 261,
-        61 / 261,
-        40 / 261,
-        19 / 261,
-    ]  # Gewichtungen für Heimtore
-    torgewichte_auswaerts = [
-        76 / 261,
-        80 / 261,
-        61 / 261,
-        25 / 261,
-        19 / 261,
-    ]  # Gewichtungen für Auswärtstore
+    if torverteilung is None:
+        # Gewichtete Wahrscheinlichkeiten für Tore (z.B. 1 Tor häufiger als 3+ Tore)
+        torverteilung = [0, 1, 2, 3, 4]  # mögliche Tore
+    if torgewichte_heim is None:
+        # Gewichtungen für Heimtore
+        torgewichte_heim = [
+            54 / 261,
+            87 / 261,
+            61 / 261,
+            40 / 261,
+            19 / 261,
+        ]
+    else:
+        # Stelle sicher, dass die Gewichtungen die gleiche Länge wie die Torverteilung haben
+        if len(torgewichte_heim) != len(torverteilung):
+            raise ValueError(
+                "Die Liste der Gewichtungen für Heimtore muss die gleiche Länge wie die Torverteilung haben."
+            )
+    if torgewichte_auswaerts is None:
+        # Gewichtungen für Auswärtstore
+        torgewichte_auswaerts = [
+            76 / 261,
+            80 / 261,
+            61 / 261,
+            25 / 261,
+            19 / 261,
+        ]
+    else:
+        # Stelle sicher, dass die Gewichtungen die gleiche Länge wie die Torverteilung haben
+        if len(torgewichte_auswaerts) != len(torverteilung):
+            raise ValueError(
+                "Die Liste der Gewichtungen für Auswärtstore muss die gleiche Länge wie die Torverteilung haben."
+            )
 
     tore_heim = random.choices(torverteilung, weights=torgewichte_heim, k=1)[0]
-    tore_auswaerts = random.choices(torverteilung, weights=torgewichte_auswaerts, k=1)[0]
+    tore_auswaerts = random.choices(torverteilung, weights=torgewichte_auswaerts, k=1)[
+        0
+    ]
 
     return tore_heim, tore_auswaerts
 
