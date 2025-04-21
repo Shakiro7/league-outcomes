@@ -59,28 +59,90 @@ def read_csv_table(filepath):
         return list(csv.DictReader(f))
 
 
+def extract_pairings_from_fixture_data(fixture_data):
+    """
+    Extrahiert Spielpaarungen aus einer Liste von Dictionaries im Format:
+    [{'Spieltag': xx, 'Paarungen': [[Heim, Auswärts], ...]}, ...]
+    Args:
+        fixture_data (list): Liste von Dictionaries mit Spieltag und Paarungen.
+    Returns:
+        list: Liste von (Heim, Auswärts)-Tuplen.
+    """
+    pairings = []
+    for spieltag in fixture_data:
+        raw_matches = spieltag.get("Paarungen", [])
+        for match in raw_matches:
+            if isinstance(match, (list, tuple)) and len(match) == 2:
+                heim, auswaerts = match[0].strip(), match[1].strip()
+                pairings.append((heim, auswaerts))
+    return pairings
+
+
 def read_csv_fixtures(filepath):
     """
     Liest eine CSV-Datei mit Spielpaarungen ein und gibt eine Liste von Tuplen zurück.
     Args:
         filepath (str): Der Pfad zur CSV-Datei.
     Returns:
-        list: Eine Liste von Tuplen, die die Spielpaarungen repräsentieren.
+        list: Eine Liste von (Heim, Auswärts)-Tuplen.
     """
-    fixtures = []
+    fixture_data = []
     with open(filepath, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             pairings_str = row.get("Paarungen")
+            spieltag = row.get("Spieltag")
             if pairings_str:
                 try:
                     pairings = ast.literal_eval(pairings_str)
-                    for match in pairings:
-                        if isinstance(match, list) and len(match) == 2:
-                            fixtures.append((match[0].strip(), match[1].strip()))
+                    fixture_data.append(
+                        {
+                            "Spieltag": (
+                                int(spieltag)
+                                if spieltag and spieltag.isdigit()
+                                else None
+                            ),
+                            "Paarungen": pairings,
+                        }
+                    )
                 except (ValueError, SyntaxError):
                     print(f"Fehler beim Parsen von Paarungen: {pairings_str}")
-    return fixtures
+
+    return extract_pairings_from_fixture_data(fixture_data)
+
+
+def normalize_results(results_raw):
+    """
+    Bringt Rohdaten aus CSV oder Scraper in ein einheitliches Format.
+    Args:
+        results_raw (list of dict): Entweder direkt gescrapte Ergebnisse oder aus CSV.
+    Returns:
+        list of dict: Eine Liste mit vereinheitlichten Spielergebnissen.
+    """
+    normalized = []
+
+    for row in results_raw:
+        spieltag = int(row["Spieltag"])
+        # Prüfen, ob "Ergebnisse" ein String ist (CSV) oder schon als Liste vorliegt (Scraper)
+        spiele = (
+            ast.literal_eval(row["Ergebnisse"])
+            if isinstance(row["Ergebnisse"], str)
+            else row["Ergebnisse"]
+        )
+
+        for spiel in spiele:
+            heim, auswaerts, tore_heim, tore_auswaerts = spiel
+            normalized.append(
+                {
+                    "Spieltag": spieltag,
+                    "Heim": heim,
+                    "Auswaerts": auswaerts,
+                    "Tore_Heim": int(tore_heim),
+                    "Tore_Auswaerts": int(tore_auswaerts),
+                }
+            )
+
+    return normalized
 
 
 def read_csv_results(filepath):
@@ -91,21 +153,8 @@ def read_csv_results(filepath):
     Returns:
         list of dict: Eine Liste mit Dictionaries für jedes Spiel.
     """
-    results = []
     with open(filepath, mode="r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        for row in reader:
-            spieltag = int(row["Spieltag"])
-            spiele = ast.literal_eval(row["Ergebnisse"])
-            for spiel in spiele:
-                heim, auswaerts, tore_heim, tore_auswaerts = spiel
-                results.append(
-                    {
-                        "Spieltag": spieltag,
-                        "Heim": heim,
-                        "Auswaerts": auswaerts,
-                        "Tore_Heim": int(tore_heim),
-                        "Tore_Auswaerts": int(tore_auswaerts),
-                    }
-                )
-    return results
+        raw_results = list(reader)
+
+    return normalize_results(raw_results)

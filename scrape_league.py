@@ -14,7 +14,7 @@ def get_current_table(league: str = "2-bundesliga", export: bool = False):
     """
     Scrape a current table from kicker.de for a given league.
     Args:
-        league (str): The league to scrape. Naming according to the kicker url. 
+        league (str): The league to scrape. Naming according to the kicker url.
         Default is "2-bundesliga".
         export (bool): If True, export the data to a CSV file.
     Returns:
@@ -71,8 +71,8 @@ def get_current_table(league: str = "2-bundesliga", export: bool = False):
             platz = extract_cell_text(cols[0])
             team_name = extract_cell_text(cols[3])
             team_name = re.sub(
-                r" \((A|N)\)$", "", team_name
-            )  # Entferne "(A)" oder "(N)"
+                r" \([^)]*\)$", "", team_name
+            )  # Entferne Klammerausdrücke wie z.B. "(A)" oder "(N)"
             spiele = extract_cell_text(cols[4])
             siege = extract_cell_text(cols[5])
             unentschieden = extract_cell_text(cols[6])
@@ -116,7 +116,7 @@ def get_fixtures(
     Args:
         start_matchday (int): The matchday to start scraping from.
         end_matchday (int): The last matchday to scrape. Default is 34.
-        league (str): The league to scrape. Naming according to the kicker url. 
+        league (str): The league to scrape. Naming according to the kicker url.
         Default is "2-bundesliga".
         season (str): The season to scrape. Default is "2024-25".
         export (bool): If True, export the data to a CSV file.
@@ -207,7 +207,7 @@ def get_matchday_results(
     Args:
         start_matchday (int): The matchday to start scraping from.
         end_matchday (int): The matchday to end scraping at.
-        league (str): The league to scrape. Naming according to the kicker url. 
+        league (str): The league to scrape. Naming according to the kicker url.
         Default is "2-bundesliga".
         season (str): The season to scrape. Default is "2024-25".
         export (bool): If True, export the data to a CSV file.

@@ -109,8 +109,32 @@ def print_results_separated(heimtore_counter, auswaertstore_counter, ergebnis_co
         print(f"{ergebnis:<13}: {anzahl:>3} Spiele ({prozent:.2f}%)")
 
 
+def berechne_gewichte(
+    counter,
+):  # currently hardcoded for 0-4 goals; should be dynamic based on the data
+    """
+    Berechnet die Gewichtungen für Tore basierend auf der Verteilung.
+    Args:
+        counter (Counter): Zählt die Anzahl der Tore pro Team.
+    Returns:
+        list: Gewichtungen für Tore von 0 bis 4.
+    """
+    gewichte = [0] * 5
+    for tore, anzahl in counter.items():
+        if tore >= 4:
+            gewichte[4] += anzahl
+        else:
+            gewichte[tore] += anzahl
+    gesamt = sum(gewichte)
+    return [wert / gesamt for wert in gewichte]
+
+
 if __name__ == "__main__":
     DATEIPFAD = "data/ergebnisse_spieltag_1_bis_29.csv"
     ergebnisse = read_csv_results(DATEIPFAD)
     heimtore, auswaertstore, ergebnisse_verteilung = analyze_goals_separated(ergebnisse)
     print_results_separated(heimtore, auswaertstore, ergebnisse_verteilung)
+    print("\nGewichtungen für Heimtore:")
+    print(berechne_gewichte(heimtore))
+    print("\nGewichtungen für Auswärtstore:")
+    print(berechne_gewichte(auswaertstore))
