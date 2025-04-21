@@ -1,5 +1,5 @@
 """
-Scrape the current table and remaining fixtures from kicker.de for the 2. Bundesliga.
+Scrape data such as the current table, remaining fixtures, and matchday results from kicker.de.
 """
 
 import re
@@ -10,15 +10,17 @@ from utils import export_data
 BASE_URL = "https://www.kicker.de"
 
 
-def get_current_table(export: bool = False):
+def get_current_table(league: str = "2-bundesliga", export: bool = False):
     """
-    Scrape the current table from kicker.de for the 2. Bundesliga.
+    Scrape a current table from kicker.de for a given league.
     Args:
+        league (str): The league to scrape. Naming according to the kicker url. 
+        Default is "2-bundesliga".
         export (bool): If True, export the data to a CSV file.
     Returns:
         list: A list of dictionaries containing the table data.
     """
-    url = f"{BASE_URL}/2-bundesliga/tabelle"
+    url = f"{BASE_URL}/{league}/tabelle"
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -97,16 +99,26 @@ def get_current_table(export: bool = False):
             continue
 
     if export:
-        export_data(table_data, "zweite_liga_tabelle")
+        export_data(table_data, f"{league}_tabelle")
 
     return table_data
 
 
-def get_remaining_fixtures(start_matchday: int, export: bool = False):
+def get_fixtures(
+    start_matchday: int,
+    end_matchday: int = 34,
+    league: str = "2-bundesliga",
+    season: str = "2024-25",
+    export: bool = False,
+):
     """
-    Scrape the remaining fixtures from kicker.de for the 2. Bundesliga.
+    Scrape fixtures from kicker.de for a given league.
     Args:
         start_matchday (int): The matchday to start scraping from.
+        end_matchday (int): The last matchday to scrape. Default is 34.
+        league (str): The league to scrape. Naming according to the kicker url. 
+        Default is "2-bundesliga".
+        season (str): The season to scrape. Default is "2024-25".
         export (bool): If True, export the data to a CSV file.
     Returns:
         list: A list of dictionaries containing the fixtures data.
@@ -114,8 +126,9 @@ def get_remaining_fixtures(start_matchday: int, export: bool = False):
 
     fixtures = []
 
-    for matchday in range(start_matchday, 35):
-        url = f"{BASE_URL}/2-bundesliga/spieltag/2024-25/{matchday}"
+    for matchday in range(start_matchday, end_matchday + 1):
+        # Adjust the URL for the current season
+        url = f"{BASE_URL}/{league}/spieltag/{season}/{matchday}"
         headers = {
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -174,17 +187,29 @@ def get_remaining_fixtures(start_matchday: int, export: bool = False):
         fixtures.append({"Spieltag": matchday, "Paarungen": matchday_fixtures})
 
     if export:
-        export_data(fixtures, f"paarungen_ab_spieltag_{start_matchday}")
+        export_data(
+            fixtures,
+            f"{season}_{league}_paarungen_spieltag_{start_matchday}_bis_{end_matchday}",
+        )
 
     return fixtures
 
 
-def get_matchday_results(start_matchday: int, end_matchday: int, export: bool = False):
+def get_matchday_results(
+    start_matchday: int,
+    end_matchday: int,
+    league: str = "2-bundesliga",
+    season: str = "2024-25",
+    export: bool = False,
+):
     """
-    Scrape the matchday results from kicker.de for the 2. Bundesliga.
+    Scrape the matchday results from kicker.de for a given league.
     Args:
         start_matchday (int): The matchday to start scraping from.
         end_matchday (int): The matchday to end scraping at.
+        league (str): The league to scrape. Naming according to the kicker url. 
+        Default is "2-bundesliga".
+        season (str): The season to scrape. Default is "2024-25".
         export (bool): If True, export the data to a CSV file.
     Returns:
         list: A list of dictionaries containing the matchday results data.
@@ -193,7 +218,7 @@ def get_matchday_results(start_matchday: int, end_matchday: int, export: bool = 
     results = []
 
     for matchday in range(start_matchday, end_matchday + 1):
-        url = f"{BASE_URL}/2-bundesliga/spieltag/2024-25/{matchday}"
+        url = f"{BASE_URL}/{league}/spieltag/{season}/{matchday}"
         headers = {
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -258,14 +283,17 @@ def get_matchday_results(start_matchday: int, end_matchday: int, export: bool = 
         results.append({"Spieltag": matchday, "Ergebnisse": matchday_results})
 
     if export:
-        export_data(results, f"ergebnisse_spieltag_{start_matchday}_bis_{end_matchday}")
+        export_data(
+            results,
+            f"{season}_{league}_ergebnisse_spieltag_{start_matchday}_bis_{end_matchday}",
+        )
 
     return results
 
 
 if __name__ == "__main__":
     tabelle = get_current_table(export=False)
-    paarungen = get_remaining_fixtures(30, export=False)
+    paarungen = get_fixtures(30, export=False)
     ergebnisse = get_matchday_results(28, 29, export=False)
 
     print("Aktuelle Tabelle:")
