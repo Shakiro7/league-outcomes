@@ -81,7 +81,7 @@ Info: Die Heatmaps stellen die Platzierungswahrscheinlichkeiten der Teams NACH d
 | Spieltag | Heatmap |
 |----------|---------|
 | 30       | [Heatmap anzeigen](output/bundesliga_platzierungsprobs_nach_spieltag_30_runs_1000000.png) |
-| 31       | *(Noch nicht verfügbar)* |
+| 31       | [Heatmap anzeigen](output/bundesliga_platzierungsprobs_nach_spieltag_31_runs_1000000.png) |
 | 32       | *(Noch nicht verfügbar)* |
 | 33       | *(Noch nicht verfügbar)* |
 
@@ -91,7 +91,7 @@ Info: Die Heatmaps stellen die Platzierungswahrscheinlichkeiten der Teams NACH d
 |----------|---------|
 | 29       | [Heatmap anzeigen](output/2-bundesliga_platzierungsprobs_nach_spieltag_29_runs_1000000.png) |
 | 30       | [Heatmap anzeigen](output/2-bundesliga_platzierungsprobs_nach_spieltag_30_runs_1000000.png) |
-| 31       | *(Noch nicht verfügbar)* |
+| 31       | [Heatmap anzeigen](output/2-bundesliga_platzierungsprobs_nach_spieltag_31_runs_1000000.png) |
 | 32       | *(Noch nicht verfügbar)* |
 | 33       | *(Noch nicht verfügbar)* |
 
