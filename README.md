@@ -93,6 +93,6 @@ Info: Die Heatmaps stellen die Platzierungswahrscheinlichkeiten der Teams NACH d
 | 30       | [Heatmap anzeigen](output/2-bundesliga_platzierungsprobs_nach_spieltag_30_runs_1000000.png) |
 | 31       | [Heatmap anzeigen](output/2-bundesliga_platzierungsprobs_nach_spieltag_31_runs_1000000.png) |
 | 32       | [Heatmap anzeigen](output/2-bundesliga_platzierungsprobs_nach_spieltag_32_runs_1000000.png) |
-| 33       | *(Noch nicht verfügbar)* |
+| 33       | [Heatmap anzeigen](output/2-bundesliga_platzierungsprobs_nach_spieltag_33_runs_1000000.png) |
 
 -> Die Visualisierungen werden nach jedem Spieltag aktualisiert und als PNG eingebunden oder verlinkt.
