@@ -10,7 +10,7 @@ from utils import normalize_results, extract_pairings_from_fixture_data
 from sim_season_all import simulate_season_for_all_teams
 
 # USER INPUTS
-LEAGUE = "2-bundesliga"  # league name as per the kicker URL, e.g. "bundesliga"
+LEAGUE = "bundesliga"  # league name as per the kicker URL, e.g. "bundesliga"
 PLAYED_MATCHDAYS = 33  # last matchday that has been played (integer)
 FINAL_MATCHDAY = 34  # last matchday of the season (integer)
 SEASON = "2024-25"  # season string as per kicker URL, e.g. "2024-25"
